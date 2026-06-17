@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException
 from api.src.schemas.food_schema import FoodListResponse, FoodResponse
 from api.src.schemas.category_schema import CategoryListResponse
 from api.src.repository.json_store import TacoJsonRepository
+from api.src.services.get_food_list_use_case import get_food_list_use_case
+from api.src.services.get_food_info_use_case import get_food_info_use_case
+from api.src.services.get_category_list_use_case import get_category_list_use_case
 
 router = APIRouter(prefix="/taco", tags=["Taco"])
 
@@ -9,9 +12,7 @@ router = APIRouter(prefix="/taco", tags=["Taco"])
 def list_category():
 	all_data = TacoJsonRepository.get_all_data()
 
-	category_list = []
-	for category in all_data:
-		category_list.append(category.get("category"))
+	category_list = get_category_list_use_case(all_data)
 
 	return {
 		"data": category_list 
@@ -21,12 +22,7 @@ def list_category():
 def list_food_by_category(category: str):
 	all_data = TacoJsonRepository.get_all_data()
 	
-	food_list = []
-	for food_category in all_data:
-		category_name = food_category.get("category")
-		if category_name == category:
-			food_list = food_category.get("foods")
-			break
+	food_list = get_food_list_use_case(all_data, category)
 	
 	if len(food_list) <= 0:
 		raise HTTPException(status_code=404, detail="Category not found")
@@ -39,22 +35,12 @@ def list_food_by_category(category: str):
 def get_food_information(category: str, food: str):
 	all_data = TacoJsonRepository.get_all_data()
 	
-	food_list = []
-	for food_category in all_data:
-		category_name = food_category.get("category")
-		if category_name == category:
-			food_list = food_category.get("foods")
-			break
+	food_list = get_food_list_use_case(all_data, category)
 		
 	if len(food_list) <= 0:
 		raise HTTPException(status_code=404, detail="Category not found")
 
-	food_info = None
-	for food_data in food_list:
-		description = food_data.get("description")
-		if description == food:
-			food_info = food_data
-			break
+	food_info = get_food_info_use_case(food_list, food)
 
 	if not food_info:
 		raise HTTPException(status_code=404, detail="Food not found")
