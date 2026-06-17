@@ -1,9 +1,8 @@
 import json
 from pathlib import Path
-from typing import Any
 
 class TacoJsonRepository:
-	_memory_data: list[dict[str, Any]] = []
+	_memory_data: list[dict[str, list[dict[str, str]]]] = []
 
 	@classmethod
 	def load_data(cls, file_path: str) -> None:
@@ -18,5 +17,5 @@ class TacoJsonRepository:
 			cls._memory_data = []
 
 	@classmethod
-	def get_all_data(cls) -> list[dict[str, Any]]:
+	def get_all_data(cls) -> list[dict[str, list[dict[str, str]]]]:
 		return cls._memory_data

@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 from typing import Any
 
-class FoodResponse(BaseModel):
+class Food(BaseModel):
 	id: int
 	description: str
 	energy_kcal: float | None = None
@@ -15,6 +15,9 @@ class FoodResponse(BaseModel):
 		alias_generator=to_camel,
 		populate_by_name=True
 	) 
+
+class FoodResponse(BaseModel):
+	data: Food
 
 class FoodListResponse(BaseModel):
 	data: list[Any]
