@@ -1,24 +1,30 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="PyTACOAPI")
+from api.src.repository.json_store import TacoJsonRepository
+from api.src.routers import food
 
-# 2. Definição de Contratos (Pydantic)
-class UsuarioExemplo(BaseModel):
-    id: int
-    nome: str
-    ativo: bool
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    json_path = "api/data/taco_cleaned.json"
+    TacoJsonRepository.load_data(json_path)
 
-# 3. Rota HTTP GET (Leitura)
-@app.get("/usuarios/{usuario_id}")
-def buscar_usuario(usuario_id: int):
-    # O FastAPI automaticamente extrai o 'usuario_id' da URL,
-    # converte para inteiro e valida.
-    return {"mensagem": f"Buscando usuário {usuario_id}"}
+    yield
 
-# 4. Rota HTTP POST (Criação)
-@app.post("/usuarios", response_model=UsuarioExemplo)
-def criar_usuario(usuario: UsuarioExemplo):
-    # O payload JSON do corpo da requisição é automaticamente 
-    # convertido para o objeto 'UsuarioExemplo'.
-    return usuario
+app = FastAPI(
+    title="PyTACOAPI",
+    description="API de consulta de macronutrientes servida em memória.",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(food.router, prefix="api/v1")
