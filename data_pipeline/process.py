@@ -1,7 +1,7 @@
 from src.config import RAW_DATA_PATH, TARGET_SHEET, PROCESSED_DATA_PATH
 from src.reader import load_raw_taco
 from src.cleaner import clean_taco_data
-from src.json_parser import create_json
+from src.json_parser import create_json_data, create_json_file
 
 def main() -> None:
 	print("Starting...")
@@ -16,8 +16,9 @@ def main() -> None:
 		print(df_cleaned)
 
 		print("Creating .json")
-		create_json(df_cleaned, PROCESSED_DATA_PATH)
-		df_cleaned.to_excel("inspecao_visual.xlsx", index=False)
+		final_data = create_json_data(df_cleaned)
+		create_json_file(final_data, PROCESSED_DATA_PATH)
+		#df_cleaned.to_excel("inspecao_visual.xlsx", index=False)
 
 	except FileNotFoundError as e:
 		print(e)
