@@ -1,9 +1,9 @@
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
+from typing import Any
 
 class FoodResponse(BaseModel):
 	id: int
-	category: str
 	description: str
 	energy_kcal: float | None = None
 	protein_grams: float | None = None
@@ -15,3 +15,12 @@ class FoodResponse(BaseModel):
 		alias_generator=to_camel,
 		populate_by_name=True
 	) 
+
+class FoodListResponse(BaseModel):
+	data: list[Any]
+
+	model_config = ConfigDict(
+		alias_generator=to_camel,
+		populate_by_name=True
+	) 
+

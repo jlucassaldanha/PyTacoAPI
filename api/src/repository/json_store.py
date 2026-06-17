@@ -12,7 +12,7 @@ class TacoJsonRepository:
 		try:
 			with open(path, 'r', encoding='utf-8') as file:
 				cls._memory_data = json.load(file)
-				print(f"{len(cls._memory_data)} alimentos carregados na memória")
+				print("Alimentos carregados na memória")
 		except FileNotFoundError:
 			print(f"Arquivo não encontrado: {file_path}")
 			cls._memory_data = []
